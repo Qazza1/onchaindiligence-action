@@ -10,16 +10,13 @@ Add `.github/workflows/sanctions.yml`:
 
 ```yaml
 name: Sanctions screen
-on: [pull_request]
-
+on: [push]
 jobs:
   screen:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: Qazza1/onchaindiligence-action@v1
-        with:
-          payer-key: ${{ secrets.PAYER_KEY }}
 ```
 
 That scans your config files for addresses, screens each one, and fails the job if any is sanctioned.
