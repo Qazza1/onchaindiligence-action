@@ -1,8 +1,0 @@
-name: Sanctions screen
-on: [push]
-jobs:
-  screen:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: Qazza1/onchaindiligence-action@v1
