@@ -1,0 +1,55 @@
+name: 'OnchainDiligence Sanctions Screen'
+description: 'Screen wallet addresses found in your repo against sanctions lists on every PR. Fails the build if any address is sanctioned.'
+author: 'OnchainDiligence'
+branding:
+  icon: 'shield'
+  color: 'red'
+
+inputs:
+  files:
+    description: 'Glob(s) of files to scan for addresses, comma- or newline-separated. Defaults to common config/payout locations.'
+    required: false
+    default: '**/*.json,**/*.env,**/*.yml,**/*.yaml,**/*.toml'
+  addresses:
+    description: 'Explicit addresses to screen (comma- or newline-separated), in addition to any found in files.'
+    required: false
+    default: ''
+  payer-key:
+    description: 'A funded viem private key used to pay for screening calls. Pass via a secret: ${{ secrets.PAYER_KEY }}. If omitted, the action runs in sandbox mode and only validates wiring (no real screening).'
+    required: false
+    default: ''
+  fail-on-sanctioned:
+    description: 'Fail the build if any screened address is sanctioned.'
+    required: false
+    default: 'true'
+  base-url:
+    description: 'Override the API base URL (advanced).'
+    required: false
+    default: ''
+
+outputs:
+  sanctioned-count:
+    description: 'Number of addresses that came back sanctioned.'
+    value: ${{ steps.screen.outputs.sanctioned_count }}
+  screened-count:
+    description: 'Total number of unique addresses screened.'
+    value: ${{ steps.screen.outputs.screened_count }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Screen addresses
+      id: screen
+      shell: bash
+      env:
+        OCD_FILES: ${{ inputs.files }}
+        OCD_ADDRESSES: ${{ inputs.addresses }}
+        PAYER_KEY: ${{ inputs.payer-key }}
+        OCD_FAIL_ON_SANCTIONED: ${{ inputs.fail-on-sanctioned }}
+        OCD_BASE_URL: ${{ inputs.base-url }}
+      run: node "${{ github.action_path }}/scan.mjs"
