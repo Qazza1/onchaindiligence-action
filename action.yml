@@ -15,7 +15,7 @@ inputs:
     required: false
     default: ''
   payer-key:
-    description: 'A funded viem private key used to pay for screening calls. Pass via a secret: ${{ secrets.PAYER_KEY }}. If omitted, the action runs in sandbox mode and only validates wiring (no real screening).'
+    description: 'A funded viem private key used to pay for screening calls. Pass it from the calling workflow as secrets.PAYER_KEY. If omitted, the action runs in sandbox mode and only validates wiring (no real screening).'
     required: false
     default: ''
   fail-on-sanctioned:
